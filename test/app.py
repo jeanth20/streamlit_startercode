@@ -56,14 +56,24 @@ def view_all_access():
 
 
 
+def local_css(file_name):
+    with open(file_name, "rb") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+local_css(".streamlit/style.css")
+
+
+
+
+
 st.title("My Streamlit App")
  
 def main():
     with st.sidebar:
         selected = option_menu(
                 menu_title=None,
-                options=["Login", "Sign Up", "Logout"],
-                icons=["door-open-fill", "signpost", "door-closed-fill"],
+                options=["Login", "Sign Up", "Logout", "Contact"],
+                icons=["door-open-fill", "signpost", "door-closed-fill", "person-lines-fill"],
                 menu_icon="cast",
                 default_index=0,
             )
@@ -101,9 +111,28 @@ def main():
                     st.balloons()
 
         elif selected == "Logout":
+            # import streamlit as st
+            # import streamlit.components.v1 as components
+
+            # html_string = '''
+            # <h1>HTML string in RED</h1>
+
+            # <script language="javascript">
+            # document.querySelector("h1").style.color = "red";
+            # console.log("Streamlit runs JavaScript");
+            # alert("Streamlit runs JavaScript");
+            # </script>
+            # '''
+
+            # components.html(html_string)
+
+            # st.markdown(html_string, unsafe_allow_html=True)
+            
             st.info("Logout")
             st.success("Bye")
-
+            
+        elif selected == "Contact":
+            st.header("Contact Form")
 
 
     col1, col2 = st.columns(2)
@@ -123,8 +152,27 @@ def main():
 
 
     col12, col22, col32 = st.columns(3)
-    
-    
+        
+    with col12:
+        coll = st.columns(1)
+        st.header("Contact")
+        # https://formsubmit.co/
+        contact_form = """
+        <div class="container">
+            <form action="https://formsubmit.co/jean.t@affinityhealth.co.za" method="POST">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_blacklist" value="spammy pattern, banned term, phrase">
+                <input type="hidden" name="_subject" value="New submission!">
+                <input type="text" name="name" required>
+                <input type="email" name="email" required>
+                <textarea name="message" placeholder="Your message here"></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+        """
+        
+        st.markdown(contact_form, unsafe_allow_html=True)     
+        
     # import time
     # with col22:
     #     with st.spinner(text='In progress'):
@@ -161,9 +209,12 @@ def main():
 # </style>
 # """, unsafe_allow_html=True)
     
-if __name__ == "__main__":
+    
+
+    
+if __name__ == "__main__":    
     main()
   
-    
+
 
 
