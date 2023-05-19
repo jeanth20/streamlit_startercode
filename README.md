@@ -15,3 +15,4 @@ streamlit run app.py
 - https://icons.getbootstrap.com/
 - https://docs.streamlit.io/library/cheatsheet
 - https://docs.streamlit.io/library/api-reference#tags
+- https://formsubmit.co/
