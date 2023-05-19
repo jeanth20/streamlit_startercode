@@ -1,9 +1,13 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
-import pandas as pd
+from streamlit_lottie import st_lottie
 from datetime import datetime as d
+import pandas as pd
+import requests
+import json
 
-
+# User Modules
+from routes import mysql
 
 date = d.now()
 
@@ -12,84 +16,67 @@ timestamp = date.strftime("%Y-%m-%d %H:%M:%S")
 # https://icons.getbootstrap.com/
 # python -m pip install --upgrade streamlit-extras
 # pip install streamlit-option-menu
-# pip install extra-streamlit-components
+# pip install extra-streamlit-components/test/requirements.txt
 # https://docs.streamlit.io/library/cheatsheet
 # https://docs.streamlit.io/library/api-reference#tags
 
-# use sqlite
-import sqlite3
-conn = sqlite3.connect("data.db")
-c = conn.cursor()
+st.title("Welcome Please Sign In")
 
-
-def create_usertable():
-    c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT, email TEXT, password TEXT)')
-
-def add_usertable(username, email, password):
-    c.execute('INSERT INTO userstable(username, email, password) VALUES (?,?,?)', (username, email, password))
-    conn.commit()
-
-def create_usertrackertable():
-    c.execute('CREATE TABLE IF NOT EXISTS userstrackertable(username TEXT, datetime TEXT)')
-
-def add_datetime_table(username, datetime):
-    c.execute('INSERT INTO userstrackertable(username, datetime) VALUES (?,?)', (username, datetime))
-    conn.commit()
-
-create_usertable()
-create_usertrackertable()
-
-def fetch_usertable(username, password):
-    c.execute('SELECT * FROM userstable WHERE username=? AND password=?', (username, password))
-    data = c.fetchall()
-    return data
-
-def view_all_users():
-    c.execute('SELECT * FROM userstable')
-    data = c.fetchall()
-    return data
-
-def view_all_access():
-    c.execute('SELECT * FROM userstrackertable')
-    data = c.fetchall()
-    return data
-
-
-
-def local_css(file_name):
-    with open(file_name, "rb") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-local_css(".streamlit/style.css")
-
-
-
-
-
-st.title("My Streamlit App")
- 
 def main():
+    # from dir
+    def load_lottiefile(filepath: str):
+        with open(filepath, "r") as f:
+            return json.load(f)
+
+    lottie_coding = load_lottiefile("animations/arrow-doodle.json")  # replace link to local lottie file
+    st_lottie(lottie_coding,
+              key="hello",
+              quality="low",
+              height=300,
+              width=400,
+              )
+        
+    # # from site
+    # def load_lottieurl(url: str):
+    #     r = requests.get(url)
+    #     if r.status_code != 200:
+    #         return None
+    #     return r.json()
+        
+    # lottie_hello = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_Pr3rKjXraf.json")
+
+    # st_lottie(
+    #     lottie_hello,
+    #     speed=1,
+    #     reverse=False,
+    #     loop=True,
+    #     quality="low", # medium ; high
+    #     #renderer="svg", # canvas
+    #     height=None,
+    #     width=None,
+    #     key=None,
+    # )
     with st.sidebar:
         selected = option_menu(
                 menu_title=None,
-                options=["Login", "Sign Up", "Logout", "Contact"],
-                icons=["door-open-fill", "signpost", "door-closed-fill", "person-lines-fill"],
+                options=["Sign In", "Sign Out", "Sign Up", "Support"],
+                icons=["door-open-fill", "door-closed-fill", "signpost", "person-lines-fill"],
                 menu_icon="cast",
                 default_index=0,
             )
 
-        if selected == "Login":
-            st.subheader("Login")
+        if selected == "Sign In":
+            st.subheader("Sign In")
             username = st.sidebar.text_input("Username")
             password = st.sidebar.text_input("Password", type="password")
                 
-            if st.sidebar.button("Login"):
+            if st.sidebar.button("Sign In"):
                 if username is None:
                     st.warning("Login Error")
                 else:
                     timestamp = date.strftime("%Y-%m-%d %H:%M:%S")
-                    check = fetch_usertable(username, password)
-                    log = add_datetime_table(username, timestamp)
+                    check = mysql.fetch_usertable(username, password)
+                    log = mysql.add_datetime_table(username, timestamp)
 
                     st.sidebar.success("Login Tracker fired: {}".format(timestamp))
                     st.sidebar.success("Logged In as {}".format(username))
@@ -104,110 +91,71 @@ def main():
                 if username == None or email == None or password == None:
                     st.warning("Sign Up Error")
                 else:
-                    result = add_usertable(username, email, password)
+                    result = mysql.add_usertable(username, email, password)
                     
                     st.info("You have been Signed up, please proceed to login page")
                     st.success("Welcome {}".format(username))
                     st.balloons()
 
-        elif selected == "Logout":
+        elif selected == "Sign Out":
             # import streamlit as st
             # import streamlit.components.v1 as components
-
             # html_string = '''
             # <h1>HTML string in RED</h1>
-
             # <script language="javascript">
             # document.querySelector("h1").style.color = "red";
             # console.log("Streamlit runs JavaScript");
             # alert("Streamlit runs JavaScript");
             # </script>
             # '''
-
             # components.html(html_string)
-
-            # st.markdown(html_string, unsafe_allow_html=True)
+            # st.markdown(html_string, unsafe_allow_html=True)            
+            st.info("Sign Out")
+            # st.success("Bye")
             
-            st.info("Logout")
-            st.success("Bye")
-            
-        elif selected == "Contact":
-            st.header("Contact Form")
+        elif selected == "Support":
+            st.header("")
+            coll = st.columns(1)
+            # https://formsubmit.co/
+            contact_form = """
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+            <script src="https://bootstrapcreative.com/wp-bc/wp-content/themes/wp-bootstrap/codepen/bootstrapcreative.js?v=8"></script>
+            <div class="col-sm-12 form-column">
+                <form action="https://formsubmit.co/jeantheron2018@gmail.com" method="POST">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_subject" value="New submission!">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_blacklist" value="spammy pattern, banned term, phrase">
+                    <div class="form-group">
+                        <label for="email">Your Email</label>
+                        <input type="email" id="email" name="email" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" name="email" class="form-control" required >
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea name="message" class="form-control"></textarea>
+                    </div>            
+                    <button type="submit">Send</button>
+                </form>
+            </div>
+            """
+            st.markdown(contact_form, unsafe_allow_html=True)     
+        # Load custom stylesheet
+        def local_css(file_name):
+            with open(file_name) as f:
+                st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+        local_css(".streamlit/style.css")
 
 
-    col1, col2 = st.columns(2)
-    col1.write("")
-    col2.write("")
-    with col1:
-        st.subheader("login Table")
-        user_result = view_all_access()
-        clean_db = pd.DataFrame(user_result, columns=["username", "datetime"])
-        st.dataframe(clean_db)
-
-    with col2:
-        st.subheader("User Table")
-        user_result = view_all_users()
-        clean_db = pd.DataFrame(user_result, columns=["username", "email", "password"])
-        st.dataframe(clean_db)
 
 
-    col12, col22, col32 = st.columns(3)
-        
-    with col12:
-        coll = st.columns(1)
-        st.header("Contact")
-        # https://formsubmit.co/
-        contact_form = """
-        <div class="container">
-            <form action="https://formsubmit.co/jean.t@affinityhealth.co.za" method="POST">
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_blacklist" value="spammy pattern, banned term, phrase">
-                <input type="hidden" name="_subject" value="New submission!">
-                <input type="text" name="name" required>
-                <input type="email" name="email" required>
-                <textarea name="message" placeholder="Your message here"></textarea>
-                <button type="submit">Send</button>
-            </form>
-        </div>
-        """
-        
-        st.markdown(contact_form, unsafe_allow_html=True)     
-        
-    # import time
-    # with col22:
-    #     with st.spinner(text='In progress'):
-    #         time.sleep(5)
-    #         st.success('Done')
-    
-        # st.progress(progress_variable_1_to_100)
-
-    # with col12:
-    #     st.balloons()
-
-    # with col32:
-        # st.write("mothing here")
-        # # Show different content based on the user's email address.
-        # if st.user.email == 'jane@email.com':
-        #     display_jane_content()
-        # elif st.user.email == 'adam@foocorp.io':
-        #     display_adam_content()
-        # else:
-        #     st.write("Please contact us to get access!")
-
-        # st.error('')
-        # st.warning('Warning message')
-        # st.info('Info message')
-        # st.success('Success message')
-        # st.exception(e)
-    
-
-# st.markdown("""
-# <style>
-#     #MainMenu, footer {
-#     visibility: hidden;
-# }
-# </style>
-# """, unsafe_allow_html=True)
     
     
 
