@@ -25,22 +25,27 @@ c = conn.cursor()
 def create_usertable():
     c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT, email TEXT, password TEXT)')
 
-def create_usertrackertable():
-    c.execute('CREATE TABLE IF NOT EXISTS userstrackertable(username TEXT, datetime TEXT)')
-
-create_usertable()
-create_usertrackertable()
-
 def add_usertable(username, email, password):
     c.execute('INSERT INTO userstable(username, email, password) VALUES (?,?,?)', (username, email, password))
     conn.commit()
 
+def create_usertrackertable():
+    c.execute('CREATE TABLE IF NOT EXISTS userstrackertable(username TEXT, datetime TEXT)')
+
 def add_datetime_table(username, datetime):
-    c.execute('INSERT INTO usertrackerstable(username, datetime) VALUES (?,?)', (username, datetime))
+    c.execute('INSERT INTO userstrackertable(username, datetime) VALUES (?,?)', (username, datetime))
     conn.commit()
+
+create_usertable()
+create_usertrackertable()
 
 def fetch_usertable(username, password):
     c.execute('SELECT * FROM userstable WHERE username=? AND password=?', (username, password))
+    data = c.fetchall()
+    return data
+
+def view_all_users():
+    c.execute('SELECT * FROM userstable')
     data = c.fetchall()
     return data
 
@@ -49,10 +54,6 @@ def view_all_access():
     data = c.fetchall()
     return data
 
-def view_all_users():
-    c.execute('SELECT * FROM userstable')
-    data = c.fetchall()
-    return data
 
 
 st.title("My Streamlit App")
@@ -80,22 +81,24 @@ def main():
                     check = fetch_usertable(username, password)
                     log = add_datetime_table(username, timestamp)
 
-                    st.success("Logged In as {}".format(username))
+                    st.sidebar.success("Login Tracker fired: {}".format(timestamp))
+                    st.sidebar.success("Logged In as {}".format(username))
 
         elif selected == "Sign Up":
             st.sidebar.subheader("Create an account")
             username = st.sidebar.text_input("Username")
             email = st.sidebar.text_input("Email Address")
             password = st.sidebar.text_input("Password", type="password")
-                
+            
             if st.sidebar.button("Sign Up"):
                 if username == None or email == None or password == None:
                     st.warning("Sign Up Error")
                 else:
                     result = add_usertable(username, email, password)
-                        
+                    
                     st.info("You have been Signed up, please proceed to login page")
                     st.success("Welcome {}".format(username))
+                    st.balloons()
 
         elif selected == "Logout":
             st.info("Logout")
@@ -119,13 +122,48 @@ def main():
         st.dataframe(clean_db)
 
 
-st.markdown("""
-<style>
-    #MainMenu, footer {
-    visibility: hidden;
-}
-</style>
-""", unsafe_allow_html=True)    
+    col12, col22, col32 = st.columns(3)
+    
+    
+    # import time
+    # with col22:
+    #     with st.spinner(text='In progress'):
+    #         time.sleep(5)
+    #         st.success('Done')
+    
+        # st.progress(progress_variable_1_to_100)
+
+    # with col12:
+    #     st.balloons()
+
+    # with col32:
+        # st.write("mothing here")
+        # # Show different content based on the user's email address.
+        # if st.user.email == 'jane@email.com':
+        #     display_jane_content()
+        # elif st.user.email == 'adam@foocorp.io':
+        #     display_adam_content()
+        # else:
+        #     st.write("Please contact us to get access!")
+
+        # st.error('')
+        # st.warning('Warning message')
+        # st.info('Info message')
+        # st.success('Success message')
+        # st.exception(e)
+    
+
+# st.markdown("""
+# <style>
+#     #MainMenu, footer {
+#     visibility: hidden;
+# }
+# </style>
+# """, unsafe_allow_html=True)
     
 if __name__ == "__main__":
     main()
+  
+    
+
+
