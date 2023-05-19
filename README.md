@@ -5,6 +5,7 @@ Streamlit Starter Code For Fast Deploy
 streamlit run app.py
 
 # Starter Code incudes:
-- Login
-- Sign up
-- Support
+- Login with tracking
+- Sign up with credential email*
+- sqlite3 with threading
+- Email for Support  
