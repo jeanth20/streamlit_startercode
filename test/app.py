@@ -14,6 +14,7 @@ timestamp = date.strftime("%Y-%m-%d %H:%M:%S")
 # pip install streamlit-option-menu
 # pip install extra-streamlit-components
 # https://docs.streamlit.io/library/cheatsheet
+# https://docs.streamlit.io/library/api-reference#tags
 
 # use sqlite
 import sqlite3
@@ -54,44 +55,14 @@ def view_all_users():
     return data
 
 
-
-# st.title("Simple Login Page")
 st.title("My Streamlit App")
-
  
 def main():
-    # selected1 = option_menu(
-    #     menu_title=None,
-    #     options=["Home", "Similar"],
-    #     icons=["house", "book"],
-    #     menu_icon="cast",
-    #     default_index=0,
-    #     orientation="horizontal"
-    # )
-    
-    # if selected1 == "similar":
-    #     import streamlit as st
-    #     import streamlit.components.v1 as components
-
-    #     html_string = '''
-    #     <h1>HTML string in RED</h1>
-
-    #     <script language="javascript">
-    #     document.querySelector("h1").style.color = "red";
-    #     console.log("Streamlit runs JavaScript");
-    #     alert("Streamlit runs JavaScript");
-    #     </script>
-    #     '''
-
-    #     components.html(html_string)
-    #     st.markdown(html_string, unsafe_allow_html=True)
-
-
     with st.sidebar:
         selected = option_menu(
                 menu_title=None,
-                options=["Login", "Sign Up"],
-                icons=["door-open-fill", "signpost"],
+                options=["Login", "Sign Up", "Logout"],
+                icons=["door-open-fill", "signpost", "door-closed-fill"],
                 menu_icon="cast",
                 default_index=0,
             )
@@ -105,78 +76,52 @@ def main():
                 if username is None:
                     st.warning("Login Error")
                 else:
+                    timestamp = date.strftime("%Y-%m-%d %H:%M:%S")
                     check = fetch_usertable(username, password)
                     log = add_datetime_table(username, timestamp)
 
                     st.success("Logged In as {}".format(username))
 
-                    access = st.selectbox("Access", ["swipe", "peter"])
-                    if access == "swipe":
-                        st.subheader("swipe")
-                    elif access == "peter":
-                        st.subheader("peter")
-
-            elif selected == "Sign Up":
-                st.subheader("Create an account")
-                username = st.sidebar.text_input("Username")
-                email = st.sidebar.text_input("Email Address")
-                password = st.sidebar.text_input("Password", type="password")
+        elif selected == "Sign Up":
+            st.sidebar.subheader("Create an account")
+            username = st.sidebar.text_input("Username")
+            email = st.sidebar.text_input("Email Address")
+            password = st.sidebar.text_input("Password", type="password")
                 
-                if st.sidebar.button("Sign Up"):
-                    if username == None or email == None or password == None:
-                        st.warning("Sign Up Error")
-                    else:
-                        result = add_usertable(username, email, password)
+            if st.sidebar.button("Sign Up"):
+                if username == None or email == None or password == None:
+                    st.warning("Sign Up Error")
+                else:
+                    result = add_usertable(username, email, password)
                         
-                        st.info("You have been Signed up, please proceed to login page")
-                        st.success("Welcome {}".format(username))
+                    st.info("You have been Signed up, please proceed to login page")
+                    st.success("Welcome {}".format(username))
+
+        elif selected == "Logout":
+            st.info("Logout")
+            st.success("Bye")
+
 
 
     col1, col2 = st.columns(2)
     col1.write("")
     col2.write("")
-
-
     with col1:
         st.subheader("login Table")
-        # user_result = view_all_access()
-        # clean_db = pd.DataFrame(user_result, columns=["username", "datetime"])
-        # st.dataframe(clean_db)
-        # import pandas as pd
-        # from faker import Faker
-        # import streamlit as st
-        # from streamlit_extras.dataframe_explorer import dataframe_explorer
-
-        # def generate_fake_dataframe(size, cols, col_names, seed):
-        #     fake = Faker()
-        #     Faker.seed(seed)
-
-        #     data = []
-        #     for _ in range(size):
-        #         row = [fake.date_between(start_date='-30y', end_date='today').strftime('%Y-%m-%d') if col == 'date' else getattr(fake, col)() for col in cols]
-        #         data.append(row)
-
-        #     df = pd.DataFrame(data, columns=col_names)
-        #     return df
-
-        # dataframe = generate_fake_dataframe(
-        #     size=500, cols=["d", "f", "c"], col_names=("date", "income", "person"), seed=1
-        # )
-
-        # filtered_df = dataframe_explorer(dataframe, case=False)
-        # st.dataframe(filtered_df, use_container_width=True)
-
+        user_result = view_all_access()
+        clean_db = pd.DataFrame(user_result, columns=["username", "datetime"])
+        st.dataframe(clean_db)
 
     with col2:
         st.subheader("User Table")
-    #     user_result = view_all_users()
-    #     clean_db = pd.DataFrame(user_result, columns=["username", "email", "password"])
-    #     st.dataframe(clean_db)
+        user_result = view_all_users()
+        clean_db = pd.DataFrame(user_result, columns=["username", "email", "password"])
+        st.dataframe(clean_db)
 
 
 st.markdown("""
 <style>
-    #MainMenu, footer, .header, .css-18ni7ap.e8zbici2 {
+    #MainMenu, footer {
     visibility: hidden;
 }
 </style>
