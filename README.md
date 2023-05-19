@@ -9,3 +9,9 @@ streamlit run app.py
 - Sign up with credential email*
 - sqlite3 with threading
 - Email for Support  
+
+
+# Useful Resources
+- https://icons.getbootstrap.com/
+- https://docs.streamlit.io/library/cheatsheet
+- https://docs.streamlit.io/library/api-reference#tags
