@@ -5,7 +5,15 @@ from routes import menu
 
 st.markdown("""
     <style>
-        #MainMenu, footer, .header, .css-18ni7ap.e8zbici2 {
+    #MainMenu, footer, .header, .css-18ni7ap.e8zbici2 {
+        visibility: hidden;
+    }
+
+    .css-1je5a9p.e1tzin5v2, .css-5rimss.e16nr0p34 {
+        display: none;
+    }
+        
+    .stAlert {
         visibility: hidden;
     }
     </style>
