@@ -2,6 +2,7 @@ import streamlit as st
 from streamlit_login_auth_ui.widgets import __login__
 from routes import menu
 
+st.set_page_config(page_title="Umbrella", page_icon="☂️", layout="wide")
 
 st.markdown("""
     <style>
